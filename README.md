@@ -26,16 +26,7 @@ Jawaban
 ```javascript
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>SoalShift Modul 3 Kelompok F01
-1. Putri Endah Puspitasari    (05111740000039)
-2. Garda Negara Wisnumurti (05111740000153)
-Kelas : Sisop FSoalShift Modul 3 Kelompok F01
-1. Putri Endah Puspitasari    (05111740000039)
-2. Garda Negara Wisnumurti (05111740000153)
-Kelas : Sisop FSoalShift Modul 3 Kelompok F01
-1. Putri Endah Puspitasari    (05111740000039)
-2. Garda Negara Wisnumurti (05111740000153)
-Kelas : Sisop F
+#include <unistd.h>
 
 char string[95];
 int string_len;
