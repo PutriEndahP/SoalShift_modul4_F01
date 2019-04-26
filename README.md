@@ -33,7 +33,7 @@ a. Tepat saat sebelum file system di-mount
    ii.  Misal ada sekumpulan file pecahan video bernama “computer.mkv.000”,         “computer.mkv.001”, “computer.mkv.002”, dst. Maka         secara otomatis file pecahan tersebut akan di-join menjadi file video “computer.mkv”
 Untuk mempermudah kalian, dipastikan hanya video file saja yang terpecah menjadi beberapa file. File pecahan tersebut dijamin terletak di root folder fuse
 
-  iii.  Karena mungkin file video sangat banyak sehingga mungkin saja saat menggabungkan file video, file system akan membutuhkan waktu yang lama untuk sukses ter-mount. Maka pastikan saat akan menggabungkan file pecahan video, file system akan membuat 1 thread/proses(fork) baru yang dikhususkan untuk menggabungkan file video tersebut
+  iii.  Karena mungkin file video sangat banyak sehingga mungkin saja saat menggabungkan file video, file system akan membutuhkan waktu yang lama untuk sukses ter-mount. Maka pastikan saat akan menggabungkan file pecahan video, file system akan membuat __1 thread/proses(fork) baru__ yang dikhususkan untuk menggabungkan file video tersebut
 
    iv.   Pindahkan seluruh file video yang sudah ter-join ke dalam folder “Videos”
    
