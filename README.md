@@ -27,21 +27,31 @@ Semua file video yang tersimpan secara terpecah-pecah (splitted) harus secara ot
 Urutan operasi dari kebutuhan ini adalah:
 
 a. Tepat saat sebelum file system di-mount
+
    i.   Secara otomatis folder “Videos” terbuat di root directory file system
-   ii.  Misal ada sekumpulan file pecahan video bernama “computer.mkv.000”,         “computer.mkv.001”, “computer.mkv.002”, dst. Maka secara otomatis file pecahan tersebut akan di-join menjadi file video “computer.mkv”
+   
+   ii.  Misal ada sekumpulan file pecahan video bernama “computer.mkv.000”,         “computer.mkv.001”, “computer.mkv.002”, dst. Maka         secara otomatis file pecahan tersebut akan di-join menjadi file video “computer.mkv”
 Untuk mempermudah kalian, dipastikan hanya video file saja yang terpecah menjadi beberapa file. File pecahan tersebut dijamin terletak di root folder fuse
+
   iii.  Karena mungkin file video sangat banyak sehingga mungkin saja saat menggabungkan file video, file system akan membutuhkan waktu yang lama untuk sukses ter-mount. Maka pastikan saat akan menggabungkan file pecahan video, file system akan membuat 1 thread/proses(fork) baru yang dikhususkan untuk menggabungkan file video tersebut
-  iv.   Pindahkan seluruh file video yang sudah ter-join ke dalam folder “Videos”
-  v.    Jangan tampilkan file pecahan di direktori manapun
+
+   iv.   Pindahkan seluruh file video yang sudah ter-join ke dalam folder “Videos”
+   
+   v.    Jangan tampilkan file pecahan di direktori manapun
+   
 b. Tepat saat file system akan di-unmount
+
   i.    Hapus semua file video yang berada di folder “Videos”, tapi jangan hapus file pecahan yang terdapat di root directory file system
+  
   ii.   Hapus folder “Videos”
 
 ## Soal 3
 Sebelum diterapkannya file system ini, Atta pernah diserang oleh hacker LAPTOP_RUSAK yang menanamkan user bernama “chipset” dan “ic_controller” serta group “rusak” yang tidak bisa dihapus. Karena paranoid, Atta menerapkan aturan pada file system ini untuk menghapus “file bahaya” yang memiliki spesifikasi:
+
   - Owner Name 	: ‘chipset’ atau ‘ic_controller’
   - Group Name	: ‘rusak’
   - Tidak dapat dibaca
+  
 Jika ditemukan file dengan spesifikasi tersebut ketika membuka direktori, Atta akan menyimpan nama file, group ID, owner ID, dan waktu terakhir diakses dalam file “filemiris.txt” (format waktu bebas, namun harus memiliki jam menit detik dan tanggal) lalu menghapus “file bahaya” tersebut untuk mencegah serangan lanjutan dari LAPTOP_RUSAK.
 
 ## Soal 4
