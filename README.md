@@ -7,7 +7,7 @@ Suatu ketika King of YouTube ASEAN, Atta Halilintar, mengunjungi laboratorium AJ
 Prestasi dan ketenarannya ternyata menarik perhatian hacker yang ingin mencuri video-video berkualitas milik Atta, bahkan ingin mencuri password akun YouTube miliknya. 
 Menurut intel Atta, pemimpin hacker yang berusaha menyerangnya adalah :
 
-![soal2](https://github.com/PutriEndahP/SoalShift_modul3_F01/blob/master/soal2/Screenshot%20from%202019-04-14%2004-59-56.png)
+![soal2](https://github.com/PutriEndahP/SoalShift_modul4_F01/blob/master/SOAL%20SHIFT%20M4.png)
 
 Hacker LAPTOP_RUSAK
 Hacker tersebut menyusup ke dalam file system yang ada di dalam PC Atta dengan mudah karena ternyata file system tersebut sama sekali tidak memiliki sistem pengamanan. Maka dari itu maksud Atta ke laboratorium AJK karena dia ingin kalian untuk mengembangkan file system yang aman.
