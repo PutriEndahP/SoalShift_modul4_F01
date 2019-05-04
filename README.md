@@ -412,6 +412,111 @@ int main(int argc, char *argv[])
 
 
 ## Jawaban Soal Latihan
+1. 
+
+		#define FUSE_USE_VERSION 28
+		#include <fuse.h>
+		#include <stdio.h>
+		#include <string.h>
+		#include <unistd.h>
+		#include <fcntl.h>
+		#include <dirent.h>
+		#include <errno.h>
+		#include <sys/time.h>
+
+		static const char *dirpath = "/home/gardanwm/Downloads";
+
+		static int xmp_getattr(const char *path, struct stat *stbuf)
+		{
+		  int res;
+			char fpath[1000];
+			sprintf(fpath,"%s%s",dirpath,path);
+			int a = strlen(fpath);
+			if(fpath[a-1]=='k' && fpath[a-2]=='a' && fpath[a-3]=='b' && fpath[a-4]=='.'){
+				fpath[a-4]='\0';
+			}
+			res = lstat(fpath, stbuf);
+
+			if (res == -1)
+				return -errno;
+
+			return 0;
+		}
+
+		static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
+				       off_t offset, struct fuse_file_info *fi)
+		{
+		  char fpath[1000];
+			if(strcmp(path,"/") == 0)
+			{
+				path=dirpath;
+				sprintf(fpath,"%s",path);
+			}
+			else sprintf(fpath, "%s%s",dirpath,path);
+		//	int res = 0;
+
+			DIR *dp;
+			struct dirent *de;
+			char temp[300];
+			(void) offset;
+			(void) fi;
+
+			dp = opendir(fpath);
+			if (dp == NULL)
+				return -errno;
+
+			while ((de = readdir(dp)) != NULL) {
+				struct stat st;
+				memset(&st, 0, sizeof(st));
+				st.st_ino = de->d_ino;
+				st.st_mode = de->d_type << 12;
+				strcpy(temp,de->d_name);
+				strcat(temp,".bak");
+				if (filler(buf, temp, &st, 0))
+					break;
+			}
+
+			closedir(dp);
+			return 0;
+		}
+
+		static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
+				    struct fuse_file_info *fi)
+		{
+		  char fpath[1000];
+			if(strcmp(path,"/") == 0)
+			{
+				path=dirpath;
+				sprintf(fpath,"%s",path);
+			}
+			else sprintf(fpath, "%s%s",dirpath,path);
+			int res = 0;
+		  int fd = 0 ;
+
+			(void) fi;
+			fd = open(fpath, O_RDONLY);
+			if (fd == -1)
+				return -errno;
+
+			res = pread(fd, buf, size, offset);
+			if (res == -1)
+				res = -errno;
+
+			close(fd);
+			return res;
+		}
+
+		static struct fuse_operations xmp_oper = {
+			.getattr	= xmp_getattr,
+			.readdir	= xmp_readdir,
+			.read		= xmp_read,
+		};
+
+		int main(int argc, char *argv[])
+		{
+			umask(333);
+			return fuse_main(argc, argv, &xmp_oper, NULL);
+		}
 
 
 ## SoalShift_modul4_F01
@@ -545,6 +650,93 @@ b. Tepat saat file system akan di-unmount
   i.    Hapus semua file video yang berada di folder “Videos”, tapi jangan hapus file pecahan yang terdapat di root directory file system
   
   ii.   Hapus folder “Videos”
+  
+  #### Jawaban & Penjelasan
+  
+		  static void* pre_init(struct fuse_conn_info *conn)
+		{	//nama folder videos
+			char folder[100000] = "/Videos";
+				char folde1r[100000] = "/YOUTUBER";
+				//nge enkripsi nama folder videos
+				enkripsi(folder);
+				enkripsi(folde1r);
+				char fpath[1000];
+			//ngegabungin dirpath sdan nama foldernya
+			sprintf(fpath,"%s%s", dirpath, folder);
+				//buat folder videos
+				mkdir(fpath,0755);
+				memset(fpath,0,sizeof(fpath));
+				sprintf(fpath,"%s%s", dirpath, folde1r);
+				mkdir(fpath,0755);
+				memset(fpath,0,sizeof(fpath));
+
+				pid_t child1;
+				child1=fork();
+				if(child1==0){
+					DIR *dp;
+					struct dirent *de;
+					dp = opendir(dirpath);
+					//ngecek semua file yang ada di dirpath
+					while((de = readdir(dp))){
+						if(strcmp(de->d_name,".")!=0 && strcmp(de->d_name,"..")!=0){
+							char ext[1000] = ".mkv";
+							enkripsi(ext);
+							if(strlen(de->d_name)>7 && strncmp(de->d_name+strlen(de->d_name)-8,ext,4)==0){
+
+									char joined[1000];
+									char video[1000] = "/Videos";
+									enkripsi(video);
+									sprintf(joined,"%s%s/",dirpath,video);
+									//ngegabungin semua file yg harus digabungkan
+									strncat(joined,de->d_name,strlen(de->d_name)-4);
+									FILE* mainj;
+									mainj = fopen(joined,"a+");
+									FILE* need;
+									char this[1000];
+									sprintf(this,"%s/%s",dirpath,de->d_name);
+									need = fopen(this,"r");
+									int c;
+									//ngegabungin isi video
+									while(1) {
+										c = fgetc(need);
+										if( feof(need) ) {
+										   break;
+										}
+										fprintf(mainj,"%c",c);
+									}
+
+							}
+						}
+					}
+					exit(EXIT_SUCCESS);
+				}
+
+			(void) conn;
+			return NULL;
+		}
+
+		static void post_destroy(void* private_data)
+		{
+			char fpath[10000];
+			char folder[100000] = "/Videos";
+			enkripsi(folder);
+		    sprintf(fpath,"%s%s", dirpath, folder);
+
+			DIR *dp;
+			struct dirent *de;
+			dp = opendir(fpath);
+			//mengahpus semua file yang ada di dalam folder videos
+			while((de = readdir(dp))){
+				if(strcmp(de->d_name,".")!=0 && strcmp(de->d_name,"..")!=0){
+					char file[1000];
+					sprintf(file,"%s/%s",fpath,de->d_name);
+					remove(file);
+				}
+			}
+			rmdir(fpath);
+
+			return;
+		}
 
 ### Soal 3
 Sebelum diterapkannya file system ini, Atta pernah diserang oleh hacker LAPTOP_RUSAK yang menanamkan user bernama “chipset” dan “ic_controller” serta group “rusak” yang tidak bisa dihapus. Karena paranoid, Atta menerapkan aturan pada file system ini untuk menghapus “file bahaya” yang memiliki spesifikasi:
@@ -808,4 +1000,193 @@ __Catatan:__
 
 * File System __AFSHiaAP__ mengarah ke folder __/home/[user]/shift4.__
 
+#### Jawaban & Penjelasan
+		static int xmp_write(const char *path, const char *buf, size_t size,
+				     off_t offset, struct fuse_file_info *fi)
+		{
+			int fd;
+			int res;
+		    char fpath[1000];
+		    char name[1000];
 
+			sprintf(name,"%s",path);
+		    enkripsi(name);
+			sprintf(fpath,"%s%s",dirpath,name);
+
+			char newname[1000];
+			char folder[1000] = "/Backup";
+			enkripsi(folder);
+			char folderdir[1000];
+			sprintf(folderdir,"%s%s",dirpath,folder);
+			//membuat folder backup
+			mkdir(folderdir,0755);
+
+			(void) fi;
+			fd = open(fpath, O_WRONLY);
+			if (fd == -1)
+				return -errno;
+			printf("%s\n",buf);
+			res = pwrite(fd, buf, size, offset);
+			if (res == -1)
+				res = -errno;
+
+			close(fd);
+
+			struct stat sd;
+			if(stat(fpath,&sd)>-1 && strstr(path,".swp")==0){
+				char t[1000];
+				time_t now = time(NULL);
+				char fname[1000];
+				//ngambil timestampnya
+				strftime(t, 22, "_%Y-%m-%d_%H:%M:%S", localtime(&now));
+				dekripsi(name);
+				//mendapatkan nama file keseluruhan
+				sprintf(newname,"/Backup%s%s.ekstensi",name,t);
+				enkripsi(newname);
+				memset(fname,'\0',sizeof(fname));
+				sprintf(fname,"%s%s",dirpath,newname);
+				// printf("%s\n",fpath);
+				pid_t child1;
+				child1=fork();
+				if(child1==0){
+					//ngocpy isi file asli ke file backup
+					execl("/bin/cp","/bin/cp",fpath,fname,NULL);
+					exit(EXIT_SUCCESS);
+				}
+				else{
+					wait(NULL);
+				}
+
+				return res;
+			}
+
+			return res;
+		}
+
+		static int xmp_unlink(const char *path)
+		{
+			int res;
+		    char fpath[1000];
+		    char name[1000];
+			sprintf(name,"%s",path);
+			if(strstr(name,".swp")==0 && strstr(name,".gooutpustream")==0 && strstr(name,"/RecycleBin/") == 0){
+				char folder[100000] = "/RecycleBin";
+				enkripsi(folder);
+				char fpath[1000];
+			sprintf(fpath,"%s%s", dirpath, folder);
+				//membuatt folder recycle bin
+				mkdir(fpath,0755);
+
+				char t[1000];
+				time_t now = time(NULL);
+				//mendapatkan timestamp
+				strftime(t, 22, "_%Y-%m-%d_%H:%M:%S", localtime(&now));
+
+				char zip[1000];
+				char fzip[1000];
+				char fname[1000];
+				memset(zip,0,sizeof(zip));
+				memset(fzip,0,sizeof(fzip));
+				memset(fname,0,sizeof(fname));
+				//mendapatkan nama file lengkap
+				sprintf(zip,"/RecycleBin%s_deleted_%s.zip",name,t);
+				enkripsi(name);
+				sprintf(fname,"%s%s",dirpath,name);
+				enkripsi(zip);
+				sprintf(fzip,"%s%s",dirpath,zip);
+				pid_t child1;
+				char dum[10000];
+				dekripsi(name);
+				sprintf(dum,"%s%s",dirpath,name);
+				enkripsi(name);
+
+
+				child1=fork();
+				if(child1==0){
+					//nge copy isi file asli ke file recycle bin
+					execl("/bin/cp","/bin/cp",fname,dum,NULL);
+					exit(EXIT_SUCCESS);
+				}
+				else{
+					wait(NULL);
+				}
+
+				child1=fork();
+				if(child1==0){
+					//nge zip folder yg dihapus
+					execl("/usr/bin/zip","/usr/bin/zip","-q","-m","-j",fzip,dum,NULL);
+					exit(EXIT_SUCCESS);
+				}
+				else{
+					wait(NULL);
+				}
+				remove(fname);
+
+				char fback[1000] = "/Backup";
+				enkripsi(fback);
+				char foldbackp[1000];
+				sprintf(foldbackp,"%s%s",dirpath,fback);
+				DIR *dp;
+				struct dirent *de;
+
+				dp = opendir(foldbackp);
+				while((de = readdir(dp))){
+					if(strncmp(name+1,de->d_name,strlen(de->d_name)-29)==0){
+
+						memset(fzip,0,sizeof(fzip));
+						memset(zip,0,sizeof(zip));
+						memset(fname,0,sizeof(fname));
+						dekripsi(name);
+						sprintf(zip,"/RecycleBin%s_deleted_%s.zip",name,t);
+						sprintf(fname,"%s/%s",foldbackp,de->d_name);
+						enkripsi(zip);
+						enkripsi(name);
+						sprintf(fzip,"%s%s",dirpath,zip);
+						char dum[10000];
+						dekripsi(de->d_name);
+						sprintf(dum,"%s/%s",dirpath,de->d_name);
+						enkripsi(de->d_name);				
+
+						child1=fork();
+						if(child1==0){
+							execl("/bin/cp","/bin/cp",fname,dum,NULL);
+							exit(EXIT_SUCCESS);
+						}
+						else{
+							wait(NULL);
+						}
+
+						child1=fork();
+						if(child1==0){
+							execl("/usr/bin/zip","/usr/bin/zip","-q","-m","-j","-u",fzip,dum,NULL);
+							exit(EXIT_SUCCESS);
+						}
+						else{
+							wait(NULL);
+						}
+						remove(fname);
+					}
+				}
+				dekripsi(name);
+				memset(zip,0,sizeof(zip));
+				memset(fzip,0,sizeof(fzip));
+				memset(fname,0,sizeof(fname));
+				sprintf(zip,"/RecycleBin%s_deleted_%s.zip",name,t);
+				enkripsi(name);
+				sprintf(fname,"%s%s",dirpath,name);
+				enkripsi(zip);
+				sprintf(fzip,"%s%s",dirpath,zip);
+				memset(fname,0,sizeof(fname));
+				strncpy(fname,fzip,strlen(fzip));
+				strcat(fzip,".zip");
+				rename(fzip,fname);
+			}
+			else{
+			enkripsi(name);
+				sprintf(fpath, "%s%s",dirpath,name);
+				res = unlink(fpath);
+				if (res == -1)
+					return -errno;
+			}
+			return 0;
+		}
