@@ -785,6 +785,12 @@ static int xmp_chmod(const char *path, mode_t mode)
 ```
 Pada fungsi chmod ini agar kan jika file.iz1 yang dibuat di folder YOUTUBER tidak bisa diganti ganti permission nya. Ketika file tersebut akan di ganti permission nya maka akan muncul pesan error yaitu pesan "File ekstensi iz1 tidak boleh diubah permissionnya".
 
+Berikut merupakan screenshot an hasil dari jawaban nomor 4 :
+
+![gambar](gambar/6.png)
+
+![gambar](gambar/5.png)
+
 ### Soal 5
 Ketika mengedit suatu file dan melakukan save, maka akan terbuat folder baru bernama __Backup__ kemudian hasil dari save tersebut akan disimpan pada backup dengan nama __namafile_[timestamp].ekstensi.__ Dan ketika file asli dihapus, maka akan dibuat folder bernama __RecycleBin__, kemudian file yang dihapus beserta semua backup dari file yang dihapus tersebut (jika ada) di zip dengan nama __namafile_deleted_[timestamp].zip__ dan ditaruh kedalam folder RecycleBin (file asli dan backup terhapus). Dengan format __[timestamp]__ adalah __yyyy-MM-dd_HH:mm:ss__
 
