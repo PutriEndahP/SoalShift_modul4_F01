@@ -19,7 +19,7 @@ Enkripsi yang Atta inginkan sangat sederhana, yaitu Caesar cipher. Namun, Kusuma
 
 Misalkan ada file bernama “halo” di dalam folder “INI_FOLDER”, dan key yang dipakai adalah 17, maka:
 
-“INI_FOLDER/halo” saat belum di-mount maka akan bernama “n,nsbZ]wio/QBE#”, saat telah di-mount maka akan otomatis terdekripsi kembali menjadi “INI_FOLDER/halo” .
+__“INI_FOLDER/halo”__ saat belum di-mount maka akan bernama __“n,nsbZ]wio/QBE#”__, saat telah di-mount maka akan otomatis terdekripsi kembali menjadi __“INI_FOLDER/halo”__ .
 Perhatian: Karakter ‘/’ adalah karakter ilegal dalam penamaan file atau folder dalam *NIX, maka dari itu dapat diabaikan
 
 Penjelasan :
@@ -85,6 +85,22 @@ Dari source code diatas kita hitung dulu panjang kata yang akan di inputkan deng
 
 ``` kata[i] = dasar[indeks_baru];``` maka kata i berubah menjadi dasar ke indeks yang baru, sama seperti penjelasan saya sebelumnya.
 
+Kemudian pada setiap fungsi di tambahkan source code berikut 
+
+```javascript
+char fpath[1000];
+	char sementara[1000];
+    sprintf(sementara,"%s",path);
+
+    enkripsi(sementara);
+	sprintf(fpath, "%s%s",dirpath,sementara);
+```
+
+``` sprintf(sementara,"%s",path);``` simpan path pada variabel sementara.
+
+```enkripsi(sementara);``` agar yang terenkripsi nantinya adalah folder dan file yang ada di sementara.
+
+```sprintf(fpath, "%s%s",dirpath,sementara);``` kemudian path keseluruhannya ditambah dengan path sememntara di simpan di variabel bernama fpath.
 
 ## Soal 2
 Semua file video yang tersimpan secara terpecah-pecah (splitted) harus secara otomatis tergabung (joined) dan diletakkan dalam folder “Videos”
