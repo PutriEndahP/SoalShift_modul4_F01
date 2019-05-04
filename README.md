@@ -517,7 +517,7 @@ char fpath[1000];
 
 Berikut merupakan screenshot an hasil dari jawaban nomor 1 :
 
-![gambar](img/4.png)
+![gambar](gambar/4.png)
 
 ### Soal 2
 Semua file video yang tersimpan secara terpecah-pecah (splitted) harus secara otomatis tergabung (joined) dan diletakkan dalam folder “Videos”
