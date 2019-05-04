@@ -22,7 +22,7 @@ Misalkan ada file bernama “halo” di dalam folder “INI_FOLDER”, dan key y
 __“INI_FOLDER/halo”__ saat belum di-mount maka akan bernama __“n,nsbZ]wio/QBE#”__, saat telah di-mount maka akan otomatis terdekripsi kembali menjadi __“INI_FOLDER/halo”__ .
 Perhatian: Karakter ‘/’ adalah karakter ilegal dalam penamaan file atau folder dalam *NIX, maka dari itu dapat diabaikan
 
-Penjelasan :
+### Jawaban & Penjelasan :
 
 Dari soal kita diminta untuk meng-enkrip kan suatu nama folder atau file dengan Caesar cipher, semua folder dan file yang dibuat akan ter enkripsi sebelum program di mount, setelah program di mount maka akan ter dekripsi. Dalam penggunaan Caesar cipher menggunakan key yaitu kunci yang digunakan untuk memudahkan proses enkripsi dan dekripsi. Berdasarkan enkripsi dekripsi Caesar cipher kita dapatkan rumus sebagai berikut :
 
@@ -101,6 +101,10 @@ char fpath[1000];
 ```enkripsi(sementara);``` agar yang terenkripsi nantinya adalah folder dan file yang ada di sementara.
 
 ```sprintf(fpath, "%s%s",dirpath,sementara);``` kemudian path keseluruhannya ditambah dengan path sememntara di simpan di variabel bernama fpath.
+
+Berikut merupakan screenshot an hasil dari jawaban nomor 1 :
+
+
 
 ## Soal 2
 Semua file video yang tersimpan secara terpecah-pecah (splitted) harus secara otomatis tergabung (joined) dan diletakkan dalam folder “Videos”
