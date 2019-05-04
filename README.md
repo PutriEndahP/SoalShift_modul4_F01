@@ -9,7 +9,7 @@ Menurut intel Atta, pemimpin hacker yang berusaha menyerangnya adalah :
 
 Hacker tersebut menyusup ke dalam file system yang ada di dalam PC Atta dengan mudah karena ternyata file system tersebut sama sekali tidak memiliki sistem pengamanan. Maka dari itu maksud Atta ke laboratorium AJK karena dia ingin kalian untuk mengembangkan file system yang aman.
 
-Atta menginginkan nama file system yang akan kalian buat adalah “AFSHiaAP”, yang nama kepanjangannya adalah AHHA’s File System: Hierarchical and Advanced Protection. Berikut ini kebutuhan yang harus kalian penuhi:
+Atta menginginkan nama file system yang akan kalian buat adalah “__AFSHiaAP__”, yang nama kepanjangannya adalah AHHA’s File System: Hierarchical and Advanced Protection. Berikut ini kebutuhan yang harus kalian penuhi:
 
 ## Soal 1
 Semua nama file dan folder harus terenkripsi
@@ -22,109 +22,69 @@ Misalkan ada file bernama “halo” di dalam folder “INI_FOLDER”, dan key y
 “INI_FOLDER/halo” saat belum di-mount maka akan bernama “n,nsbZ]wio/QBE#”, saat telah di-mount maka akan otomatis terdekripsi kembali menjadi “INI_FOLDER/halo” .
 Perhatian: Karakter ‘/’ adalah karakter ilegal dalam penamaan file atau folder dalam *NIX, maka dari itu dapat diabaikan
 
-Jawaban
+Penjelasan :
+
+Dari soal kita diminta untuk meng-enkrip kan suatu nama folder atau file dengan Caesar cipher, semua folder dan file yang dibuat akan ter enkripsi sebelum program di mount, setelah program di mount maka akan ter dekripsi. Dalam penggunaan Caesar cipher menggunakan key yaitu kunci yang digunakan untuk memudahkan proses enkripsi dan dekripsi. Berdasarkan enkripsi dekripsi Caesar cipher kita dapatkan rumus sebagai berikut :
+
+* Enkripsi : (indeks + key) mod (jml_list)
+
+* Dekripsi : (indeks + (jml_list - key)) mod (jml_key)
+
+Indeks merupakan huruf yang di inputkan itu indeks ke berapa di list yang sudah di sediakan.
+Sehingga kita dapatkan suatu source code untuk Enkripsi nya yaitu :
+
+* Enkripsi :
+
 ```javascript
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-
-char string[95];
-int string_len;
-char output_encrypt[256];
-char output_decrypt[256];
-
-int mod(int a, int b) {
-    int r = a % b;
-    return r < 0 ? r + b : r;
-}
-
-void do_encrypt(char input[], int key){
-    int input_len=  strlen(input);
-
-    for (int i=0; i < input_len; i++){
-        if (input[i] == '/'){
-            output_encrypt[i] = '/';
-        }
-        else {
-            // get index in string
-            char *e;
-            e=  strchr(string, input[i]);
-            int index = (int)(e - string);
-
-            // encrypt
-            int new_index=  mod((index + key), string_len);
-            // printf("%d, %d, %d, %d\n", new_index, index, key, string_len);
-
-            // output
-            output_encrypt[i] = string[new_index];
+void enkripsi(char* kata)
+{
+    char dasar[100] = "qE1~ YMUR2\"`hNIdPzi%^t@(Ao:=CQ,nx4S[7mHFye#aT6+v)DfKL$r?bkOGB>}!9_wV']jcp5JZ&Xl|\\8s;g<{3.u*W-0";
+    for(int i=0; i<strlen(kata); i++){
+        for(int j = 0 ; j<strlen(dasar); j++){
+            if(kata[i] == dasar[j]){
+                int indeks_baru = (j+17) % 94;
+                kata[i] = dasar[indeks_baru];
+                break;
+            }
         }
     }
 }
-
-void do_decrypt(char input[], int key){
-    int input_len=  strlen(input);
-
-    for (int i=0; i < input_len; i++){
-        if (input[i] == '/'){
-            output_decrypt[i] = '/';
-        }
-        else {
-            // get index in string
-            char *e;
-            e=  strchr(string, input[i]);
-            int index = (int)(e - string);
-
-            // decrypt
-            int old_index=  mod((index - key), string_len);
-            // printf("%d, %d, %d, %d\n", old_index, index, key, string_len);
-
-            // output
-            output_decrypt[i] = string[old_index];
-        }
-    }
-}
-
-int main(){
-    char input[256];
-    int key=0;
-
-    // index string 0 - 93, sisanya eof
-    sprintf(string, "qE1~ YMUR2%c`hNIdPzi%c^t@(Ao:=CQ,nx4S[7mHFye#aT6+v)DfKL$r?bkOGB>}!9_wV']jcp5JZ&Xl|%c8s;g<{3.u*W-0", '"', '%', '\\');
-
-    // cari panjang string, -2 (end of file (/0)) dan +1 karena mulai dari 0
-    string_len= sizeof(string) - 1;
-
-    // get input string
-    printf("Masukan Input : \n");
-    if (fgets(input, sizeof input, stdin) != NULL) {
-      // menghitung panjang string
-      size_t len = strlen(input);
-      // menghapus newline
-      if (len > 0 && input[len-1] == '\n') {
-        input[--len] = '\0';
-      }
-    }
-
-    // get input key
-    printf("Masukan Key : \n");
-    scanf("%d", &key);
-
-    // do encrypt
-    do_encrypt(input, key);
-    printf("encrypt:\t%s\t%ld\n", output_encrypt, strlen(output_encrypt));
-
-    // do decrypt
-    do_decrypt(output_encrypt, key);
-    printf("decrypt:\t%s\t%ld\n", output_decrypt, strlen(output_decrypt));
-
-    // printf
-    // printf("Encrypt: %s\nDecrypt: %s\n", output_encrypt, output_decrypt);
-
-    // exit
-    return 0;
-}
-
 ```
+Dari source code diatas kita hitung dulu panjang kata yang akan di inputkan dengan ```  for(int i=0; i<strlen(kata); i++){ ``` jika i kurang dari panjang inputan kata dan j kurang dari panjang list dasar maka 
+
+```if(kata[i] == dasar[j]){``` jika kata ke i sama dengan dasar ke j maka menggunakan rumus enkripsi yaitu 
+
+``` int indeks_baru = (j+17) % 94;``` indeks baru sama dengan j + 17 sebagai key di mod 94 yaitu banyaknya karakter dasar.
+
+``` kata[i] = dasar[indeks_baru];``` maka kata i berubah menjadi dasar ke indeks yang baru, sama seperti penjelasan saya sebelumnya.
+
+* Dekripsi :
+
+```javascript
+void dekripsi(char* kata)
+{
+    char dasar[100] = "qE1~ YMUR2\"`hNIdPzi%^t@(Ao:=CQ,nx4S[7mHFye#aT6+v)DfKL$r?bkOGB>}!9_wV']jcp5JZ&Xl|\\8s;g<{3.u*W-0";
+    for(int i=0; i<strlen(kata); i++){
+        for(int j = 0 ; j<strlen(dasar); j++){
+            if(kata[i] == dasar[j]){
+                int indeks_baru = (j+(94-17)) % 94;
+                kata[i] = dasar[indeks_baru];
+                break;
+            }
+        }
+    }
+}
+```
+Sama seperti halnya dengan enkripsi, dekripsi pun juga sama hanya saja berbeda pada rumus nya saja.
+
+Dari source code diatas kita hitung dulu panjang kata yang akan di inputkan dengan ```  for(int i=0; i<strlen(kata); i++){ ``` jika i kurang dari panjang inputan kata dan j kurang dari panjang list dasar maka 
+
+```if(kata[i] == dasar[j]){``` jika kata ke i sama dengan dasar ke j maka menggunakan rumus enkripsi yaitu 
+
+``` int indeks_baru = (j+(94-17)) % 94;``` indeks baru sama dengan j + 94 dikurang 17 sebagai key kemudian di mod 94 yaitu banyaknya karakter dasar.
+
+``` kata[i] = dasar[indeks_baru];``` maka kata i berubah menjadi dasar ke indeks yang baru, sama seperti penjelasan saya sebelumnya.
+
 
 ## Soal 2
 Semua file video yang tersimpan secara terpecah-pecah (splitted) harus secara otomatis tergabung (joined) dan diletakkan dalam folder “Videos”
