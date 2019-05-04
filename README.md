@@ -643,6 +643,7 @@ Jika sudah maka gabungkan nama file, owner name, group name, dan waktu, yang dip
 
 Berikut merupakan screenshot an hasil dari jawaban nomor 3 :
 
+![gambar](gambar/3.png)
 
 ### Soal 4
 Pada folder __YOUTUBER,__ setiap membuat folder permission foldernya akan otomatis menjadi 750. Juga ketika membuat file permissionnya akan otomatis menjadi 640 dan ekstensi filenya akan bertambah __“.iz1”__. File berekstensi “.iz1” tidak bisa diubah permissionnya dan memunculkan error bertuliskan “File ekstensi iz1 tidak boleh diubah permissionnya.”
