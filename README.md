@@ -138,6 +138,95 @@ Sebelum diterapkannya file system ini, Atta pernah diserang oleh hacker LAPTOP_R
   
 Jika ditemukan file dengan spesifikasi tersebut ketika membuka direktori, Atta akan menyimpan nama file, group ID, owner ID, dan waktu terakhir diakses dalam file “filemiris.txt” (format waktu bebas, namun harus memiliki jam menit detik dan tanggal) lalu menghapus “file bahaya” tersebut untuk mencegah serangan lanjutan dari LAPTOP_RUSAK.
 
+### Jawaban & Penjelasan
+
+Berdasarkan soal kita diminta untuk menghapus file yang memiliki user `chipset` atau `ic_controller` dan group name nya `rusak` serta file tersebut tidak dapat dibaca denga kata lain file tersebut mempunyai permission 0000.
+
+```javascript
+struct passwd *user;
+        user = getpwuid(info.st_uid);
+        struct group *grup;
+        grup = getgrgid(info.st_gid);
+        if( (strcmp(user->pw_name,"chipset") == 0 || strcmp(user->pw_name,"ic_controller") == 0) && strcmp(grup->gr_name,"rusak") == 0){
+          if((info.st_mode & R_OK)==0){
+              char txt[10000] = "/filemiris.txt";
+              enkripsi(txt);
+              char pathtxt[100000];
+              sprintf(pathtxt,"%s%s",dirpath,txt);
+
+              FILE *filetxt;
+              filetxt = fopen(pathtxt,"a+");
+
+              char waktu[21];
+			  time_t now = time(NULL);
+			  strftime(waktu, 20, "%H:%M:%S %Y-%m-%d", localtime(&now));
+			  char isi[1000];
+              strcpy(isi,de->d_name);
+              strcat(isi,"_");
+              char iduser[1000];
+              sprintf(iduser,"%d_%d",user->pw_uid,grup->gr_gid);
+              strcat(isi,iduser);
+              strcat(isi,"_");
+              strcat(isi,waktu);
+
+              fprintf(filetxt,"%s\n",isi);
+              fclose(filetxt);
+              remove(cek);
+          }
+        }
+        else{
+            struct stat st;
+		    memset(&st, 0, sizeof(st));
+		    st.st_ino = de->d_ino;
+		    st.st_mode = de->d_type << 12;
+
+            strcpy(file,de->d_name);
+		    res = (filler(buf, file, &st, 0));
+		    	if(res!=0) break;
+        }
+	}
+
+	closedir(dp);
+	return 0;
+}
+```
+Dari source code diatas pertama- tama yang harus kita lakukan adalah :
+
+``` 
+struct passwd *user;
+        user = getpwuid(info.st_uid);
+``` 
+Digunakan untuk menggambil user atau owner name dari suatu file.
+
+```
+struct group *grup;
+        grup = getgrgid(info.st_gid);
+```
+Digunakan untuk mengambil group name dari suatu file.
+
+```  if( (strcmp(user->pw_name,"chipset") == 0 || strcmp(user->pw_name,"ic_controller") == 0) && strcmp(grup->gr_name,"rusak") == 0){``` jika dalam suatu file user nya bernama `chipset` atau `ic_controller` dan group name nya bernama `rusak` maka lakukan perintah buat file bernama `filemiris.txt`
+
+Di dalam file `filemiris.txt` tersebut tersimpan informasi file yang telah terhapus yaitu informasi nama file nya, owner name, group name, dan waktu terakhir file tersebut di lihat.
+
+```strftime(waktu, 20, "%H:%M:%S %Y-%m-%d", localtime(&now));``` digunakan untuk mengambil waktu localtime sekarang yang meliputi jam:menit:detik tahun:bulan:hari.
+
+``` sprintf(iduser,"%d_%d",user->pw_uid,grup->gr_gid);``` dugunakan untuk mendapatkan owner name atau user dan group name.
+
+Jika sudah maka gabungkan nama file, owner name, group name, dan waktu, yang dipisahkan dengan tangda `_` dengan fungsi `strcat` seperti source code berikut :
+
+```javascript
+ strcpy(isi,de->d_name);
+              strcat(isi,"_");
+              char iduser[1000];
+              sprintf(iduser,"%d_%d",user->pw_uid,grup->gr_gid);
+              strcat(isi,iduser);
+              strcat(isi,"_");
+              strcat(isi,waktu);
+```
+
+Berikut merupakan screenshot an hasil dari jawaban nomor 3 :
+
+
 ## Soal 4
 Pada folder __YOUTUBER,__ setiap membuat folder permission foldernya akan otomatis menjadi 750. Juga ketika membuat file permissionnya akan otomatis menjadi 640 dan ekstensi filenya akan bertambah __“.iz1”__. File berekstensi “.iz1” tidak bisa diubah permissionnya dan memunculkan error bertuliskan “File ekstensi iz1 tidak boleh diubah permissionnya.”
 
