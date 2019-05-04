@@ -230,6 +230,143 @@ Berikut merupakan screenshot an hasil dari jawaban nomor 3 :
 ## Soal 4
 Pada folder __YOUTUBER,__ setiap membuat folder permission foldernya akan otomatis menjadi 750. Juga ketika membuat file permissionnya akan otomatis menjadi 640 dan ekstensi filenya akan bertambah __“.iz1”__. File berekstensi “.iz1” tidak bisa diubah permissionnya dan memunculkan error bertuliskan “File ekstensi iz1 tidak boleh diubah permissionnya.”
 
+### Jawaban & Penjelasan
+
+Untuk menjawab pertanyaan dari nomor 4 kita menggunkan tiga fungsi yaitu di fungsi chmod, create, dan mkdir. Berikut merupakan source code dan penjelasan dari masing-masing kodingan.
+
+* Fungsi mkdir
+
+```javascript
+static int xmp_mkdir(const char *path, mode_t mode)
+{
+	int res;
+    char fpath[1000];
+    char spath[1000];
+	sprintf(spath,"%s",path);
+	enkripsi(spath);
+	
+    // printf("%s\n",path);
+    int length = strlen(path);
+     if (strstr(path,"YOUTUBER") && length!=9)
+    {
+        mode = 0750;
+    }
+	// enkrip(path);
+	sprintf(fpath,"%s%s",dirpath,spath);
+	res = mkdir(fpath, mode);
+	if (res == -1)
+		return -errno;
+
+	return 0;
+}
+```
+Dari source code diatas, jika kita membuat folder di dalam folder `YOUTUBER` maka secara otomatis folder tersebut permission nya akan berubah menjadi 750.
+
+``` int length = strlen(path);``` untuk menghitung panjang path nya.
+
+```  if (strstr(path,"YOUTUBER") && length!=9) { mode = 0750; }``` jika path nya ada di YOUTUBER dan panjang length nya tidak sama dengan 9, maka permission nya berubah menjadi 750.
+
+``` res = mkdir(fpath, mode);``` jika tidak memenuhi syarat yang di atas maka membuat file biasa dengan permission seperti biasanya.
+  
+ * Fungsi Create
+ 
+ ```javascript
+ static int xmp_create(const char* path, mode_t mode, struct fuse_file_info* fi) 
+{
+
+	(void) fi;
+
+    int res;
+    char fpath[1000];
+	char spath[1000];
+	sprintf(spath,"%s",path);
+	int jum;
+	int i=0;
+	
+	char *found;
+	found=strstr(spath,"YOUTUBER");
+    if(found)
+    {
+		int i=found-spath;
+		while(spath[i] != '\0')
+		{
+			if(spath[i]=='/')
+			jum++;
+			i++;
+		}
+		if(jum<2)
+		{
+			mode = 0640;
+       		strcat(spath,".iz1");
+		}
+    }
+	enkripsi(spath);
+    
+	sprintf(fpath,"%s%s",dirpath,spath);
+	// mode=0640;
+    res = creat(fpath, mode);
+    if(res == -1)
+	return -errno;
+
+    close(res);
+
+    return 0;
+}
+```
+Intinya pada fungsi ini, jika kita membuat file yang ada pada direktori YOUTUBER, maka file yang terbuat ekstensi nya akan bertambah .iz1.
+
+* Fungsi Chmod
+
+```javascript
+static int xmp_chmod(const char *path, mode_t mode)
+{
+	int res;
+    char fpath[1000];
+    char name[1000];
+	char temp[1000];
+	strcpy(temp,path);
+	enkripsi(temp);
+	sprintf(name, "%s%s", dirpath, temp);
+	struct stat sfile;
+	stat(name, &sfile);
+	// sprintf(fpath,"%s%s",dirpath,path);
+    int panjang = strlen(path);
+    if(path[panjang-1]=='1' && path[panjang-2]=='z' && path[panjang-3]=='i' && S_ISDIR(sfile.st_mode)==0)
+    {
+        pid_t child_id;
+		int status;
+		child_id=fork();
+		if(child_id == 0)
+		{
+			char *argv[5]={"zenity","--error","--text=\"File ekstensi iz1 tidak boleh diubah permissionnya.\n\"","--title=\"Warning!\"",NULL};
+			execv("/usr/bin/zenity",argv);
+		}
+		else
+		{
+			while((wait(&status)) > 0);
+		}
+		
+    }
+    else
+    {
+		char spath[1000];
+		sprintf(spath,"%s",path);
+		enkripsi(spath);
+		// char fpath[1000];
+    
+		sprintf(fpath,"%s%s",dirpath,spath);
+        res = chmod(fpath, mode);
+	    if (res == -1)
+		    return -errno;
+    }
+    
+	
+
+	return 0;
+}
+```
+Pada fungsi chmod ini agar kan jika file.iz1 yang dibuat di folder YOUTUBER tidak bisa diganti ganti permission nya. Ketika file tersebut akan di ganti permission nya maka akan muncul pesan error yaitu pesan "File ekstensi iz1 tidak boleh diubah permissionnya".
+
 ## Soal 5
 Ketika mengedit suatu file dan melakukan save, maka akan terbuat folder baru bernama __Backup__ kemudian hasil dari save tersebut akan disimpan pada backup dengan nama __namafile_[timestamp].ekstensi.__ Dan ketika file asli dihapus, maka akan dibuat folder bernama __RecycleBin__, kemudian file yang dihapus beserta semua backup dari file yang dihapus tersebut (jika ada) di zip dengan nama __namafile_deleted_[timestamp].zip__ dan ditaruh kedalam folder RecycleBin (file asli dan backup terhapus). Dengan format __[timestamp]__ adalah __yyyy-MM-dd_HH:mm:ss__
 
