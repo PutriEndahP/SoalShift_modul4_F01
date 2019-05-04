@@ -519,6 +519,10 @@ Berikut merupakan screenshot an hasil dari jawaban nomor 1 :
 
 ![gambar](gambar/4.png)
 
+![gambar](gambar/1.png)
+
+![gambar](gambar/2.png)
+
 ### Soal 2
 Semua file video yang tersimpan secara terpecah-pecah (splitted) harus secara otomatis tergabung (joined) dan diletakkan dalam folder “Videos”
 Urutan operasi dari kebutuhan ini adalah:
